@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+@purpose DeptMapper 생성
+
+  수정일         수정자       수정내용
+==========    ========    ===============================
+2023.02.08     김민서       최초생성
+
+@author 김민서
+@since 2023.02.08
+ -->
+<mapper namespace="com.cyma.bestnhp.mapper.postgre.DeptMapper">
+	<!-- SELECT 구문 -->
+	<select id="selectDeptList" resultType="map">
+		SELECT DISTINCT B.DEPT_CD
+					  , C.DEPT_HNM 
+		 		   FROM BIUSERMT A
+					  , BIUSERDT B
+					  , BIDEPTMA C
+		 		  WHERE 1 = 1
+		   			AND A.USER_CD = B.USER_CD
+		   			AND B.DEPT_CD = C.DEPT_CD 
+		   			AND A.OCTY_DVCD = 'D1'
+		   			AND A.USER_CD != 'LIME'
+		   			AND C.DEPT_HNM  LIKE '%' || #{deptHnm} || '%'  
+		   	   ORDER BY C.DEPT_HNM
+	</select>
+</mapper>

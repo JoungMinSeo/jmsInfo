@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyma.bestnhp.mapper.postgre.UserMapper">
+	
+	<resultMap id="resultUserVO" type="com.cyma.bestnhp.user.vo.UserVO">
+		<result property="userNo" column="USER_NO" />
+		<result property="userId" column="USER_ID" />
+		<result property="userPassword" column="USER_PASSWORD" />
+		<result property="userName" column="USER_NAME" />
+		<result property="userEnabled" column="USER_ENABLED" />
+	</resultMap>
+	
+	<select id="loadUserByUsername" resultMap="resultUserVO" parameterType="String">
+		SELECT USER_NO
+			 , USER_ID
+			 , USER_PASSWORD
+			 , USER_NAME
+			 , USER_ENABLED
+		  FROM TEST_USER
+		 WHERE USER_ID = #{userId}
+	</select>
+
+	<select id="loadUserByAuth" resultType="String">
+		SELECT AUTHORITY
+		  FROM TEST_AUTHORITIES
+		 WHERE USER_ID = #{userId}
+	</select>
+
+	<insert id="insertUser" parameterType="map">
+		INSERT INTO 
+		       TEST_USER ( USER_ID 
+					     , USER_PASSWORD 
+			 		     , USER_NAME
+		                 , USER_ENABLED 
+		                 )
+				  VALUES ( #{userId}
+					     , #{userPassword}
+					     , #{userName}
+					     , true
+					     )
+	</insert>
+	
+	<insert id="insertAuth" parameterType="map">
+		INSERT INTO 
+		       TEST_AUTHORITIES  ( USER_ID 
+				        	     , AUTHORITY  
+			                     )
+				          VALUES ( #{userId}
+				        	     , #{authority}
+				        	     )
+	</insert>
+</mapper>

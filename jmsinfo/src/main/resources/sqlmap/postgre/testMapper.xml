@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+@purpose TestMapper 생성
+
+  수정일       수정자       수정내용
+==========    ========    ===============================
+2023.02.09     정민서       최초생성
+
+@author 정민서
+@since 2023.02.09
+ -->
+<mapper namespace="com.cyma.bestnhp.mapper.postgre.TestMapper">
+
+	<!-- 테스트 SELECT 구문 -->
+	<select id="selectTest" parameterType="map">
+		<![CDATA[
+    	]]>
+	</select>
+	
+	<!-- 테스트 INSERT 구문 -->
+	<insert id="insertTest" parameterType="map">
+	</insert>
+	
+	<!-- 테스트 UPDATE 구문 -->
+	<update id="updateTest">
+	</update>
+	
+	<!-- 테스트 DELETE 구문 -->
+	<delete id="deleteTest">
+		<![CDATA[
+		]]>
+	</delete>
+
+</mapper>

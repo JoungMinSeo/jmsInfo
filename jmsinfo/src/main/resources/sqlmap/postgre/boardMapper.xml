@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyma.bestnhp.mapper.postgre.BoardMapper">
+	
+<!-- 	<select id="selectBoardList" resultType="map">
+        SELECT TB.BNO	    BNO
+			 , TB.TITLE     TITLE
+		     , TB.CONTENT	CNTNT
+		     , TB.REGDATE   REGDATE
+		     , TB.VIEWCOUNT VIEWCOUNT
+		     , TU.USER_NAME USERNAME
+		  FROM TEST_BOARD TB
+		     , TEST_USER TU
+		 WHERE TB.USER_NO = TU.USER_NO
+    </select> -->
+    
+    <select id="selectBoardMap" resultType="map">
+        SELECT TB.BNO	          BNO
+			 , TB.TITLE           TITLE
+		     , TB.CONTENT	      CNTNT
+		     , TB.BOARD_ADDTIME	  ADDTIME
+		     , TB.BOARD_MODTIME   MODTIME
+		     , TB.BOARD_VIEWCOUNT VIEWCOUNT
+		     , TU.USER_NO 	  	  USERNO
+		  FROM TEST_BOARD TB
+		     , TEST_USER TU
+		 WHERE TB.USER_NO = TU.USER_NO
+    </select>
+    
+   <!--  <select id="selectBoardDetail" parameterType="int" resultType="map">
+        SELECT BNO
+		     , USERNO
+		     , TITLE	
+		     , CONTENT	
+		     , ADDTIME
+		     , MODTIME
+		     , VIEWCOUNT
+		  FROM TEST_BOARD TB 
+		 WHERE TB.BNO = #{bno}
+    </select>
+    
+    <insert id="insertBoard" parameterType="map">
+		INSERT INTO 
+		       TEST_BOARD ( USER_NO 
+						  , TITLE 
+			 			  , CONTENT
+		  		     	  , VIEWCOUNT
+		                  , MODTIME
+		                  , ADDTIME 
+		                  )
+				   VALUES ( #{user_no}
+						  , #{title}
+						  , #{content}
+						  , 0
+						  , now()						 
+						  , now()
+						  )
+    </insert>
+    
+    <delete id="deleteBaord" parameterType="map">
+    	
+    	DELETE FROM TEST_BOARD 
+    		   WHERE TB.BNO = #{bno)
+    	    	
+    </delete>	 -->
+
+</mapper>

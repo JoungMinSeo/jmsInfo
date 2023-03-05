@@ -1,0 +1,99 @@
+<%@ page language="java" contentType="text/html;charset=UTF-8"%> <%@ taglib
+prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> <%@taglib
+uri="http://www.springframework.org/tags" prefix="spring"%> <%@ taglib
+uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript">
+		var SBUxConfig = {
+			Path : "../../../resource/sbux",
+			SBGrid : {	
+				Version2_5 : true,
+			},
+			SBChart : {	
+				Version2_0 : true	
+			},
+		};
+	</script>
+
+<meta charset="UTF-8">
+<title>베스티안</title>
+  <!------------------ 컴포넌트 테마 CSS ------------------>      
+	<link href="default_comp_style.css" rel="stylesheet" type="text/css">
+	<link href="blue_comp_style.css" rel="stylesheet" type="text/css">
+	<link href="orange_comp_style.css" rel="stylesheet" type="text/css">
+	<link href="purple_comp_style.css" rel="stylesheet" type="text/css">
+	<link href="white_comp_style.css" rel="stylesheet" type="text/css">
+	<link href="dark_comp_style.css" rel="stylesheet" type="text/css">
+
+  <!------------------ 스타일 테마 CSS ------------------>      
+	<link href="default_style.css" rel="stylesheet" type="text/css">
+	<link href="blue_style.css" rel="stylesheet" type="text/css">
+	<link href="orange_style.css" rel="stylesheet" type="text/css">
+	<link href="purple_style.css" rel="stylesheet" type="text/css">
+	<link href="white_style.css" rel="stylesheet" type="text/css">
+	<link href="dark_style.css" rel="stylesheet" type="text/css">
+	
+  <script src="../../../resource/sbux/SBUx.js" type="text/javascript"></script>
+  <script src="../../../resource/js/common/common.js" type="text/javascript"></script>
+  <script src="../../../resource/js/user/user.js" type="text/javascript"></script>
+
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/index.global.min.js'></script>
+  <style type="text/css">
+    /*  실작업시, 해당 프로젝트의 CSS 네이밍에 맞추어 재작업이 필요합니다.*/  
+      .sbt-A-wrap {min-width:1024px; margin:0 auto; border:1px solid #333;}
+      .sbt-A-wrap .main {display:table;  width:100%; height:668px;}
+      .sbt-A-wrap .left {display:table-cell; vertical-align: top; width:200px; }
+      .sbt-A-wrap .left .sbt-all-left {height: 100%;}
+      .sbt-A-wrap .content {display:table-cell;}
+  </style>
+</head>
+<body>
+	<div class="sbt-A-wrap">
+
+        <!-- header (menu) -->      <!-- 페이지의 상단 메뉴 부분을 나타냅니다. -->
+		<div class="sbt-all-header">
+			<sbux-menu id="idxMenu_json" name="menu_json" uitype="normal" jsondata-ref="menuJson"
+				is-fixed="false"
+				wrap-style="width:100%">
+				<brand-item text="베스티안 서울"></brand-item>
+			</sbux-menu>
+		</div>
+
+		<div class="main">
+			<!--left (sidemenu)-->     <!-- 페이지의 왼쪽 사이드 메뉴 부분을 나타냅니다. -->
+			<div class="left">
+					<div class="sbt-all-left">
+							<sbux-sidemenu id="idxSide_json" name="side_json" uitype="normal" jsondata-ref="sideJsonData">
+							</sbux-sidemenu>
+					</div>
+			</div>
+
+
+		</div>
+		<!-- main content -->
+		<div class="content">
+			<div class="sbt-popup-content-wrap">
+				<div class="sbt-wrap-full">
+					여기가 어디야 여기가 어디야 여기가 어디야 여기가 어디야여기가 어디야 여기가 어디야 여기가 어디야 여기가 어디야 여기가 어디야 여기가 어디야 
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					여기가 어디야
+					
+					
+				</div>
+			</div>
+    </div>
+  </div>
+</body>
+</html>

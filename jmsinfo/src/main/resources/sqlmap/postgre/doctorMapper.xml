@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+@purpose DoctorMapper 생성
+
+  수정일         수정자       수정내용
+==========    ========    ===============================
+2023.02.08     김민서       최초생성
+
+@author 김민서
+@since 2023.02.08
+ -->
+<mapper namespace="com.cyma.bestnhp.mapper.postgre.DoctorMapper">
+
+	<!-- SELECT 구문 -->
+	<select id="selectDoctorList" resultType="map" parameterType="map">
+		SELECT DISTINCT A.USER_CD
+		, A.USER_NM
+		, A.USER_ENM
+		, B.DEPT_CD
+		, C.DEPT_HNM 
+		  FROM BIUSERMT A
+		, BIUSERDT B
+		, BIDEPTMA C
+		 WHERE 1 = 1
+		   AND A.USER_CD = B.USER_CD
+		   AND B.DEPT_CD = C.DEPT_CD 
+		   AND A.OCTY_DVCD = 'D1'
+		   AND A.USER_CD != 'LIME'
+		   AND B.DEPT_CD LIKE '%' || #{deptCd} || '%'
+		   AND A.USER_NM LIKE '%' || #{userNm} || '%'  
+    </select>
+    
+    
+    	<!-- SELECT 구문 -->
+	<select id="selectDoctorDetailList" resultType="map" parameterType="map">
+	   SELECT A.USER_CD
+			, A.USER_NM
+			, A.USER_ENM
+			, A.OCTY_DVCD
+			, A.LCNO
+			, A.QLFC_NO
+			, A.EMR_USE_YN
+			, B.DEPT_CD
+			, B.MCSP_PRSC_USE_YN
+			, B.SLCT_DR_YN
+			, B.OTDP_REFR_PSBL_YN
+			, B.COMS_DR_YN
+			, B.NENT_SPSB_DR_YN
+			, C.DEPT_HNM 
+		 FROM BIUSERMT A
+		 	, BIUSERDT B
+		 	, BIDEPTMA C
+		WHERE 1 = 1
+		  AND A.USER_CD = B.USER_CD
+		  AND B.DEPT_CD = C.DEPT_CD 
+		  AND A.OCTY_DVCD = 'D1'
+		  AND A.USER_CD != 'LIME'
+		  AND A.USER_CD = #{userCd}
+		  AND B.DEPT_CD = #{deptCd}
+	</select>
+</mapper>

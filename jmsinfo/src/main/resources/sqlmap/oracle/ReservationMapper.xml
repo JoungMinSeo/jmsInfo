@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cyma.bestnhp.mapper.oracle.ReservationMapper">
+
+	<select id="selectReservation" resultType="map" parameterType="map">
+		SELECT A.APNT_DD
+		     , DECODE(NVL(A.APNTCNT_AM, '-'), '-', '', A.APNTCNT_AM || '명 예약가능') AS APNTCNT_AM
+    		 , DECODE(NVL(A.APNTCNT_PM, '-'), '-', '', A.APNTCNT_PM || '명 예약가능') AS APNTCNT_PM
+
+		     , A.ORSCEXRESN
+		  FROM ( 
+		  		
+		  	<foreach collection="date" item="date" index="index" separator="UNION ALL">
+		  		SELECT #{date} AS APNT_DD
+				     , FN_OR_READ_APNTCNT( #{deptCd}, '%', #{userCd}, #{date}, 'AM') AS APNTCNT_AM
+				     , FN_OR_READ_APNTCNT(#{deptCd}, '%', #{userCd}, #{date}, 'PM') AS APNTCNT_PM
+				     , FN_OR_READ_ORSCEXRESN(#{deptCd}, '%', #{userCd}, #{date}) AS ORSCEXRESN
+				     FROM DUAL
+		  	</foreach>	
+		       ) A
+	
+	</select>
+	
+	<select id="selectDateReservation" resultType="map" parameterType="map">
+		
+		SELECT PAR.APNT_YN AS APNT_YN	
+		     , PAR.APNT_TIME AS APNT_TIME	
+		     , PAR.PID AS PID	
+		     , PTI.PT_NM AS PT_NM	
+		     , PTI.SEX_DVCD AS SEX_DVCD	
+		     , TO_CHAR(FN_PA_READ_AGE(PTI.FRRN, PTI.SRRN)) AS AGE	
+		     , PTI.FRRN || '-' || PTI.SRRN AS JUMINNO	
+		     , PAR.FRVS_RVST_DVCD AS FRVS_RVST_DVCD	
+		     , FN_BI_READ_BICDINDT('FRVS_RVST_DVCD', PAR.FRVS_RVST_DVCD, PAR.MDCR_DD, 'LWRN_OVRL_CDNM') AS FRVS_RVST_DVCD_NM	
+		     , PAR.PT_CMHS_NO AS PT_CMHS_NO	
+		     , PAR.RCPN_SQNO AS RCPN_SQNO	
+		     , PAR.MDCR_DEPT_CD AS MDCR_DEPT_CD	
+		     , '%' AS APNT_DVCD	
+		     , PAR.MDCR_DR_CD AS MDCR_DR_CD	
+		     , TO_CHAR(TO_DATE(PAR.MDCR_DD, 'YYYYMMDD'), 'D') AS DOWK_DVCD	
+		     , PAR.PT_MDCR_STAT_DVCD AS PT_MDCR_STAT_DVCD	
+		     , PAR.CMHS_DVCD AS CMHS_DVCD	
+		     , FN_BI_READ_BICDINDT('CMHS_DVCD', PAR.CMHS_DVCD, PAR.MDCR_DD, 'LWRN_OVRL_CDNM') AS CMHS_DVCD_NM	
+		     , TO_CHAR(SYSDATE,'YYYYMMDD') AS TODAY	
+		     , TO_CHAR(SYSDATE,'HH24MI'  ) AS TODAY_TIME	
+		     , #{ampm} AS TIME_DVCD	
+		     , 1 AS AVRG_MDCR_NOPL	
+		     , 'Y' AS APNT_PRSL_LMTD_YN	
+		     , 'Y' AS INET_APNT_PSBL_YN	
+		     , #{date} AS APPDATE	
+		     , PAR.INSN_CLAM_DEPT_CD AS INSN_CLAM_DEPT_CD	
+		 FROM PAPATHIN PTI, PAOPATRT PAR	
+		WHERE PAR.MDCR_DD = #{date}	
+		  AND PAR.MDCR_DEPT_CD = #{deptCd}	
+		  AND PAR.MDCR_DR_CD = #{userCd}	
+		  AND PAR.ROW_STAT_DVCD = 'A'	
+		  AND FN_AD_READ_TIME_DVCD(PAR.MDCR_DD, PAR.APNT_TIME) = #{ampm}	
+		  AND PAR.PID = PTI.PID 	
+		  	
+		UNION	
+		  	
+		SELECT A.*, fn_bi_read_bideptma(A.MDCR_DEPT_CD, A.TODAY, 'INSN_CLAM_DEPT_CD') AS INSN_CLAM_DEPT_CD	
+		  FROM (SELECT A1.APNT_YN	
+		             , A1.APNT_TIME	
+		             , A1.PID	
+		             , A1.PT_NM	
+		             , A1.SEX_DVCD	
+		             , A1.AGE	
+		             , A1.JUMINNO	
+		             , A1.FRVS_RVST_DVCD	
+		             , A1.FRVS_RVST_DVCD_NM	
+		             , A1.PT_CMHS_NO	
+		             , A1.RCPN_SQNO	
+		             , A1.MDCR_DEPT_CD	
+		             , A1.APNT_DVCD	
+		             , A1.MDCR_DR_CD	
+		             , A1.DOWK_DVCD	
+		             , 'Z' AS PT_MDCR_STAT_DVCD	
+		             , '' AS CMHS_DVCD	
+		             , '' AS CMHS_DVCD_NM	
+		             , TO_CHAR(SYSDATE,'YYYYMMDD') AS TODAY	
+		             , TO_CHAR(SYSDATE,'HH24MI'  ) AS TODAY_TIME	
+		             , A1.TIME_DVCD AS TIME_DVCD	
+		             , A1.MDCR_NOPL AS MDCR_NOPL	
+		             , A1.APNT_PRSL_LMTD_YN AS APNT_PRSL_LMTD_YN	
+		             , A1.INET_APNT_PSBL_YN AS INET_APNT_PSBL_YN	
+		             , #{date} AS APPDATE	
+		          FROM ( SELECT Z.MDCR_DEPT_CD AS MDCR_DEPT_CD ,	
+		                        Z.APNT_DVCD    AS APNT_DVCD    ,	
+		                        Z.MDCR_DR_CD   AS MDCR_DR_CD   ,	
+		                        Z.EXCP_RESN    AS EXCP_RESN	
+		                   FROM ORSCEXMA Z 	
+		                  WHERE Z.MDCR_DEPT_CD  = #{deptCd}	
+		                    AND Z.APNT_DVCD     = '%'	
+		                    AND Z.MDCR_DR_CD    = #{userCd}	
+		                    AND Z.DD_TIME_DVCD  = 'D'	
+		                    AND Z.DEL_YN        = 'A'	
+		                    AND TO_DATE(#{date},'YYYYMMDD') BETWEEN TO_DATE(Z.EXCP_STRT_DD,'YYYYMMDD')	
+		                                                            AND TO_DATE(Z.EXCP_END_DD,'YYYYMMDD')	
+		                 UNION	
+		                 SELECT #{deptCd} AS MDCR_DEPT_CD,	
+		                        '%' AS APNT_DVCD   ,	
+		                        #{userCd} AS USERID      ,	
+		                        NVL(A.PBHL_CNTS,'') AS EXCP_RESN	
+		                   FROM BIHODYMA A 	
+		                  WHERE A.PBHL_DD           = #{date}	
+		                    AND A.MDCR_APNT_PSBL_YN = 'N' ) X,	
+		                        	
+		               ( SELECT 'N' AS APNT_YN	
+		                      , A.MDCR_TIME AS APNT_TIME	
+		                      , '' AS PID	
+		                      , '' AS PT_NM	
+		                      , '' AS SEX_DVCD	
+		                      , '' AS AGE	
+		                      , '' AS JUMINNO	
+		                      , '' AS FRVS_RVST_DVCD	
+		                      , '' AS FRVS_RVST_DVCD_NM	
+		                      , 0  AS PT_CMHS_NO	
+		                      , 0  AS RCPN_SQNO	
+		                      , A.MDCR_DEPT_CD	
+		                      , A.APNT_DVCD	
+		                      , A.MDCR_DR_CD	
+		                      , A.DOWK_DVCD	
+		                      , A.TIME_DVCD AS TIME_DVCD	
+		                      , A.MDCR_NOPL AS MDCR_NOPL	
+		                      , A.APNT_PRSL_LMTD_YN AS APNT_PRSL_LMTD_YN	
+		                      , A.INET_APNT_PSBL_YN AS INET_APNT_PSBL_YN	
+		                   FROM ORSCDYMA A 	
+		                  WHERE A.MDCR_DEPT_CD = #{deptCd}	
+		                    AND A.APNT_DVCD    = '%'	
+		                    AND A.MDCR_DR_CD   = #{userCd}	
+		                    AND A.MDCR_DD      = ( SELECT MAX(Z.APLY_STRT_DD)	
+		                                             FROM ORSCMAMA Z	
+		                                            WHERE Z.MDCR_DEPT_CD =  #{deptCd}	
+		                                              AND Z.APNT_DVCD    =  '%'	
+		                                              AND Z.MDCR_DR_CD   =  #{userCd}	
+		                                              AND #{date} >= Z.APLY_STRT_DD	 
+		                                              AND Z.DEL_YN = 'A' )	
+		                    AND A.ADD_EXCP_DVCD = 'D'	
+		                    AND A.DOWK_DVCD     = TO_CHAR(TO_DATE(#{date},'YYYYMMDD'),'D')	
+		                    AND A.TIME_DVCD     = #{ampm}	
+		                    AND NOT EXISTS (SELECT 1	
+		                                      FROM ORSCDYMA B	
+		                                     WHERE B.MDCR_DEPT_CD = #{deptCd}	
+		                                       AND B.APNT_DVCD    = '%'	
+		                                       AND B.MDCR_DR_CD   = #{userCd}	
+		                                       AND B.MDCR_DD      = #{date}	
+		                                       AND B.ADD_EXCP_DVCD  NOT IN ('D','E')	
+		                                       AND B.DOWK_DVCD    = TO_CHAR(TO_DATE(#{date},'YYYYMMDD'),'D'))	
+		                    AND NOT EXISTS (SELECT 1	
+		                                      FROM ORSCDYRT C	
+		                                     WHERE C.MDCR_DEPT_CD = #{deptCd}	
+		                                       AND C.APNT_DVCD   != '%'	
+		                                       AND C.MDCR_DR_CD   = #{userCd}	
+		                                       AND C.MDCR_DD      = #{date}	
+		                                       AND C.MDCR_TIME    = A.MDCR_TIME	
+		                                       AND C.DEL_YN       = 'A')	
+			
+		                 UNION ALL	
+			
+		                 SELECT 'N' AS APNT_YN	
+		                      , A.MDCR_TIME AS APNT_TIME	
+		                      , '' AS PID	
+		                      , '' AS PT_NM	
+		                      , '' AS SEX_DVCD	
+		                      , '' AS AGE	
+		                      , '' AS JUMINNO	
+		                      , '' AS FRVS_RVST_DVCD	
+		                      , '' AS FRVS_RVST_DVCD_NM	
+		                      , 0  AS PT_CMHS_NO	
+		                      , 0  AS RCPN_SQNO	
+		                      , A.MDCR_DEPT_CD	
+		                      , A.APNT_DVCD	
+		                      , A.MDCR_DR_CD	
+		                      , A.DOWK_DVCD	
+		                      , A.TIME_DVCD AS TIME_DVCD	
+		                      , A.MDCR_NOPL AS MDCR_NOPL	
+		                      , A.APNT_PRSL_LMTD_YN AS APNT_PRSL_LMTD_YN	
+		                      , A.INET_APNT_PSBL_YN AS INET_APNT_PSBL_YN	
+		                   FROM ORSCDYMA A	
+		                  WHERE A.MDCR_DEPT_CD = #{deptCd}	
+		                    AND A.APNT_DVCD    = '%'	
+		                    AND A.MDCR_DR_CD   = #{userCd}	
+		                    AND A.MDCR_DD      = #{date}	
+		                    AND A.ADD_EXCP_DVCD  NOT IN ('D','E')	
+		                    AND A.DOWK_DVCD    = TO_CHAR(TO_DATE(#{date},'YYYYMMDD'),'D')	
+		                    AND A.TIME_DVCD    = #{ampm}	
+			
+		                 UNION ALL	
+			
+		                 SELECT 'Y' AS APNT_YN	
+		                      , A.MDCR_TIME AS APNT_TIME	
+		                      , A.PID	
+		                      , B.PT_NM	
+		                      , B.SEX_DVCD	
+		                      , FN_PA_READ_PATIENTAGE('A', A.PID, TO_CHAR(SYSDATE, 'YYYYMMDD')) AS AGE	
+		                      , B.FRRN || '-' || B.SRRN AS JUMINNO	
+		                      , '' AS FRVS_RVST_DVCD	
+		                      , '' AS FRVS_RVST_DVCD_NM	
+		                      , 0  AS PT_CMHS_NO	
+		                      , 0  AS RCPN_SQNO	
+		                      , A.MDCR_DEPT_CD	
+		                      , A.APNT_DVCD	
+		                      , A.MDCR_DR_CD	
+		                      , A.DOWK_DVCD	
+		                      , A.TIME_DVCD AS TIME_DVCD	
+		                      , A.MDCR_NOPL AS MDCR_NOPL	
+		                      , A.APNT_PRSL_LMTD_YN AS APNT_PRSL_LMTD_YN	
+		                      , A.INET_APNT_PSBL_YN AS INET_APNT_PSBL_YN	
+		                   FROM ORSCDYRT A	
+		                      , PAPATHIN B	
+		                  WHERE A.PID = B.PID	
+		                    AND A.MDCR_DEPT_CD = #{deptCd}	
+		                    AND A.APNT_DVCD   != '%'	
+		                    AND A.MDCR_DR_CD   = #{userCd}	
+		                    AND A.MDCR_DD      = #{date}	
+		                    AND LIME.FN_AD_READ_TIME_DVCD(A.MDCR_DD, A.MDCR_TIME) = #{ampm}	
+		                    AND A.DEL_YN       = 'A' ) A1	
+		           WHERE A1.MDCR_DEPT_CD = X.MDCR_DEPT_CD(+)	
+		             AND A1.APNT_DVCD    = X.APNT_DVCD   (+)	
+		             AND A1.MDCR_DR_CD   = X.MDCR_DR_CD  (+)	
+		       ) A	
+		     , BIUSERDT B	
+		     , BIUSERMT C	
+		 WHERE C.USER_CD    = #{userCd}	
+		   AND B.DEPT_CD    = #{deptCd}	
+		   AND #{date} BETWEEN B.APLY_STRT_DD AND B.APLY_END_DD 	
+		   AND C.OCTY_DVCD  = 'D1'	
+		   AND C.USE_YN     = 'Y'	
+		   AND C.USER_CD    = B.USER_CD	
+		   AND A.MDCR_DR_CD = B.USER_CD   	
+		   AND NOT EXISTS (SELECT 1	
+		                    FROM PAOPATRT D	
+		                   WHERE D.MDCR_DD = A.APPDATE	
+		                     AND D.APNT_TIME = A.APNT_TIME	
+		                     AND D.MDCR_DEPT_CD = A.MDCR_DEPT_CD	
+		                     AND D.MDCR_DR_CD = A.MDCR_DR_CD	
+		                     AND D.ROW_STAT_DVCD = 'A'    	
+		                     AND FN_AD_READ_TIME_DVCD(D.MDCR_DD, D.APNT_TIME) = #{ampm})	
+		 ORDER BY APNT_TIME	
+	</select>
+	
+</mapper>
